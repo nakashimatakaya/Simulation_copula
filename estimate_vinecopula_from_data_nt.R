@@ -57,7 +57,7 @@ estimate_vinecopula_from_data <- function(dat, variables_of_interest = NULL,
     ind_na <- is.na(dat_unif[, variable])
     dat_unif[!ind_na, variable] <- marginals[[variable]]$pit(dat_unif[!ind_na, variable])
   }
-
+  
   #Account for discrete variables
   if (hasArg(var_types)) {
     arg_list <- list(...)
@@ -130,8 +130,8 @@ simulate.estVineCopula <- function(vine_output, n, value_only = TRUE) {
     time_data <- as.data.frame(expand_grid(rownames(dat_sim), gest_times))
     names(time_data) <- vine_output$names
     suppressMessages(df_sim <- dat_sim %>% 
-      rownames_to_column(vine_output$names["ID_name"]) %>%
-      right_join(time_data))
+                       rownames_to_column(vine_output$names["ID_name"]) %>%
+                       right_join(time_data))
     
     for (variable in vine_output$variables_of_interest) {
       col_ind <- grep(paste0("_", variable), names(df_sim))
