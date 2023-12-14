@@ -50,7 +50,7 @@ save(cop_data_MIMIC, file = "/Users/nakashimatakaya/Desktop/Simulation_study/Dat
 ####!RUN ON SERVER!###
 start_time <- Sys.time()
 
-cop_mimic <- estimate_vinecopula_from_data(dat = cop_data_MIMIC %>% filter(row_number() <= 1000), 
+cop_mimic <- estimate_vinecopula_from_data(dat = cop_data_MIMIC, 
                                            variables_of_interest = names(cop_data_MIMIC), 
                                            keep_data = FALSE, family_set = "parametric", cores = 40)
 
@@ -69,12 +69,17 @@ load("/Users/nakashimatakaya/Desktop/Simulation_study/Data/MIMIC/data_copula_mim
 
 #### - Simulation - ####
 set.seed(83520583)
-large_sim <- simulate(cop_mimic, 5000)
+large_sim <- simulate(cop_mimic, 5000) # 5000人分のsimulation
 
 cat("Visualize all densities \n")
 
-plot_distributions_mimic <- plot_comparison_distribution_sim_obs_generic(sim_data = large_sim, obs_data = cop_data_MIMIC, pick_color = c("#3ABAC1", "#969696"),
-                                                                         plot_type = "density", variables = names(large_sim), grob = TRUE, 
+# plot_distributionより
+plot_distributions_mimic <- plot_comparison_distribution_sim_obs_generic(sim_data = large_sim,
+                                                                         obs_data = cop_data_MIMIC, 
+                                                                         pick_color = c("#3ABAC1", "#969696"),
+                                                                         plot_type = "density", 
+                                                                         variables = names(large_sim), 
+                                                                         grob = TRUE, 
                                                                          caption = "\n  Figure S3: densities of all covariates in MIMIC which were modeled using a copula. The density of the simulations from the copula (blue solid line) and the \n  observed density (grey dashed line) show overlap for many covariate combinations.")
 
 ggsave(file = "/Users/nakashimatakaya/Desktop/Simulation_study/Outcome/MIMIC/FS3_full_copula_density_MIMIC.pdf", plot_distributions_mimic, width = 12, height = 12, units = "in", scale = 70/12, limitsize = FALSE)
@@ -106,7 +111,7 @@ for (i in 1:nrow(sets_of_interest)) {
     geom_point(shape = NA, show.legend = F) +
     scale_linetype_manual(values = c(1, 5)) +
     scale_color_manual(values =  create_colors(c("observed", "copula", "marginal distribution", "conditional distribution", "mvnormal distribution", "bootstrap"),
-                                               selected = c("grey", "turquoise", "dark yellow", "pink", "dark green", "midlight blue")), limits = force) +
+                                               selected = c("grey", "turquoise", "yellow", "pink", "darkgreen", "blue")), limits = force) +
     scale_x_continuous(expand = expansion(mult = c(0, 0)),
                        limits = quantile(all_MIMIC[, sets_of_interest[i, 3]], probs = c(0.01, 0.95), na.rm = TRUE)) +
     scale_y_continuous(expand = expansion(mult = c(0, 0)),
